@@ -35,7 +35,7 @@ modules:
         # Desktop Environment packages (Azure Linux 4.0 general-purpose packages)
         - gnome-shell
         - gdm
-       - xorg-x11-server-Xorg
+        - xorg-x11-server-Xorg
        
   - type: systemd
     system:
