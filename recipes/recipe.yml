@@ -23,19 +23,25 @@ modules:
 
   - type: dnf
     install:
-      # Core Microsoft applications
-      - powershell
-      - microsoft-edge-stable
-      - code # VS Code
-      - azure-cli
-      - mssql-cli
-      - mdatp
+      packages:
+        # Core Microsoft applications
+        - powershell
+        - microsoft-edge-stable
+        - code # VS Code
+        - azure-cli
+        - mssql-cli
+        - mdatp
       
-      # Desktop Environment packages (Azure Linux 4.0 general-purpose packages)
-      - gnome-shell
-      - gdm
-      - xorg-x11-server-Xorg
-      
+        # Desktop Environment packages (Azure Linux 4.0 general-purpose packages)
+        - gnome-shell
+        - gdm
+       - xorg-x11-server-Xorg
+       
+  - type: systemd
+    system:
+      enabled:
+        - gdm.service
+        
   - type: soar
 
 
