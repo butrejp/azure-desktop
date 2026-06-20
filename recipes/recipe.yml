@@ -18,23 +18,23 @@ modules:
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
   
   - type: script
-    snippet:
+    snippets:
       - sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
 
   - type: dnf
     install:
       # Core Microsoft applications
-      - powershell
-      - microsoft-edge-stable
-      - code # VS Code
-      - azure-cli
-      - mssql-cli
-      - mdatp
+     - powershell
+     - microsoft-edge-stable
+     - code # VS Code
+     - azure-cli
+     - mssql-cli
+     - mdatp
       
       # Desktop Environment packages (Azure Linux 4.0 general-purpose packages)
-      - gnome-shell
-      - gdm
-      - xorg-x11-server-Xorg
+     - gnome-shell
+     - gdm
+     - xorg-x11-server-Xorg
       
   - type: soar
 
