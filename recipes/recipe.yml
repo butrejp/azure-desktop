@@ -21,7 +21,7 @@ modules:
     scripts:
       - fix-fedora-repos.sh
 
-  # --- Replace Azure Linux ostree with Fedora ostree (provides 50ostree dracut module) ---
+  # --- Replace Azure Linux ostree with Fedora ostree ---
   - type: dnf
     replace:
       - from-repo: fedora
@@ -29,29 +29,23 @@ modules:
         packages:
           - ostree
 
-  # --- Write dracut config BEFORE kernel install triggers auto-dracut ---
+  # --- Write dracut config BEFORE kernel install ---
   - type: script
     scripts:
       - configure-dracut-ostree.sh
 
-  # --- Replace Azure Linux kernel with Fedora kernel + install desktop ---
+  # --- Install Fedora kernel + desktop (single transaction, single version) ---
   - type: dnf
-    replace:
-      - from-repo: fedora
-        allow-erasing: true
-        packages:
-          - kernel
-          - kernel-modules
     install:
       allow-erasing: true
       packages:
+        - kernel
+        - kernel-modules
         - kernel-modules-extra
         - gnome-shell
         - gdm
-  - type: script
-    scripts:
-      - cleanup-kernels.sh
-  # --- Safety pass: explicitly regenerate and verify initramfs ---
+
+  # --- Regenerate initramfs for the one kernel ---
   - type: script
     scripts:
       - regenerate-initramfs.sh
