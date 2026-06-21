@@ -30,12 +30,12 @@ modules:
           - ostree
           - kernel
           - kernel-modules
-          - kernel-modules-extra
     install:
       allow-erasing: true
       packages:
         - gnome-shell
         - gdm
+        - kernel-modules-extra
 
   # --- Ensure dracut includes ostree module ---
   - type: script
