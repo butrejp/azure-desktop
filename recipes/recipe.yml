@@ -11,16 +11,10 @@ modules:
       - source: system
         destination: /
 
-  # --- Inject Fedora repos natively via dnf module ---
-  # Using the standard Fedora release mirror paths for F43
-  - type: dnf
-    repos:
-      files:
-        - https://dl.fedoraproject.org/pub/fedora/linux/releases/43/Everything/x86_64/os/Packages/f/fedora-repos-43-1.noarch.rpm
-        - https://dl.fedoraproject.org/pub/fedora/linux/releases/43/Everything/x86_64/os/Packages/f/fedora-release-43-1.noarch.rpm
-        - https://dl.fedoraproject.org/pub/fedora/linux/releases/43/Everything/x86_64/os/Packages/f/fedora-gpg-keys-43-1.noarch.rpm
-      keys:
-        - https://dl.fedoraproject.org/pub/fedora/linux/releases/43/Everything/x86_64/os/Packages/f/fedora-gpg-keys-43-1.noarch.rpm
+  # --- Install Fedora repos and keys via script ---
+  - type: script
+    scripts:
+      - inject-fedora-repos.sh
 
   # --- Fix repo files for Azure Linux environment ---
   - type: script
