@@ -13,19 +13,20 @@ find /usr/lib/dracut/modules.d -maxdepth 1 \( -name "*ostree*" -o -name "*bootc*
 echo "=== Dracut config ==="
 cat /etc/dracut.conf.d/99-ostree.conf 2>/dev/null || echo "Config missing"
 
-echo "Generating initramfs..."
+# CRITICAL: Write initramfs to /usr/lib/modules/$kver/initramfs.img
+# rpm-ostree/bootc picks it up from here during deployment
+echo "Generating initramfs to /usr/lib/modules/$kver/initramfs.img..."
 dracut --force --no-hostonly --add "ostree bootc" \
        --kver "$kver" \
-       /boot/initramfs-${kver}.img "${kver}"
+       /usr/lib/modules/${kver}/initramfs.img "${kver}"
 
 echo "=== Initramfs contents (ostree-related) ==="
-lsinitrd "/boot/initramfs-${kver}.img" | grep -i "ostree\|bootc\|prepare-root" || true
+lsinitrd "/usr/lib/modules/${kver}/initramfs.img" | grep -i "ostree\|bootc\|prepare-root" || true
 
-# Check for ostree-prepare-root binary (the actual pivot tool)
-if lsinitrd "/boot/initramfs-${kver}.img" | grep -q "ostree-prepare-root"; then
+if lsinitrd "/usr/lib/modules/${kver}/initramfs.img" | grep -q "ostree-prepare-root"; then
     echo "SUCCESS: ostree-prepare-root found in initramfs"
 else
     echo "WARNING: ostree-prepare-root not found in initramfs"
 fi
 
-ls -la "/boot/initramfs-${kver}.img"
+ls -la "/usr/lib/modules/${kver}/initramfs.img"
