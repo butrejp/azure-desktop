@@ -48,7 +48,9 @@ modules:
         - kernel-modules-extra
         - gnome-shell
         - gdm
-
+  - type: script
+    scripts:
+      - cleanup-kernels.sh
   # --- Safety pass: explicitly regenerate and verify initramfs ---
   - type: script
     scripts:
