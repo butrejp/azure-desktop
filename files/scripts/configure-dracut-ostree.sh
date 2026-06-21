@@ -1,32 +1,27 @@
 #!/bin/bash
 set -euo pipefail
 
-# Ensure dracut picks up the ostree module
+# Create persistent OSTree boot marker (required by dracut module check)
+# /run/ostree-booted is volatile and won't survive into the OSTree commit
+touch /usr/lib/ostree-booted
+
+# Force dracut to include ostree and bootc modules regardless of check() result
 mkdir -p /etc/dracut.conf.d
 
 cat > /etc/dracut.conf.d/ostree.conf <<'EOF'
-add_dracutmodules+=" ostree "
-install_items+=" /usr/lib/ostree/prepare-root.cfg "
+force_add_dracutmodules+=" ostree bootc "
+install_items+=" /usr/lib/ostree/prepare-root.cfg /usr/lib/ostree-booted "
 EOF
 
-# Verify the ostree dracut module is present (Fedora uses 50ostree, not 98ostree)
-OSTREE_MODULE=""
-for mod in /usr/lib/dracut/modules.d/50ostree /usr/lib/dracut/modules.d/98ostree; do
-    if [ -d "$mod" ]; then
-        OSTREE_MODULE="$mod"
-        break
+# Verify modules exist
+for mod in 50ostree 51bootc; do
+    if [ ! -d "/usr/lib/dracut/modules.d/$mod" ]; then
+        echo "ERROR: $mod dracut module not found!" >&2
+        ls -la /usr/lib/dracut/modules.d/ | grep -E "ostree|bootc" || true
+        exit 1
     fi
+    echo "Verified: /usr/lib/dracut/modules.d/$mod"
 done
-
-if [ -z "$OSTREE_MODULE" ]; then
-    echo "ERROR: ostree dracut module not found!" >&2
-    echo "Checked: 50ostree, 98ostree" >&2
-    ls -la /usr/lib/dracut/modules.d/ | grep -E "ostree|bootc" || true
-    exit 1
-fi
-
-echo "ostree dracut module verified at: $OSTREE_MODULE"
-ls -la "$OSTREE_MODULE/"
 
 # Clean caches
 dnf5 clean all
