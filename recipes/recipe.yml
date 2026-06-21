@@ -20,8 +20,6 @@ modules:
         - https://kojipkgs.fedoraproject.org/packages/fedora-gpg-keys/43/1.3/noarch/fedora-gpg-keys-43-1.3.noarch.rpm
       keys:
         - https://kojipkgs.fedoraproject.org/packages/fedora-gpg-keys/43/1.3/noarch/fedora-gpg-keys-43-1.3.noarch.rpm
-    # Don't auto-remove these repos — we need them for the next dnf module
-    cleanup: false
 
   # --- Fix repo files and disable broken repos via script ---
   - type: script
