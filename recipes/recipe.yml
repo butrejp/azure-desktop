@@ -28,6 +28,9 @@ modules:
         allow-erasing: true
         packages:
           - ostree
+          - kernel
+          - kernel-modules
+          - kernel-modules-extra
     install:
       allow-erasing: true
       packages:
