@@ -27,6 +27,7 @@ modules:
       skip-unavailable: true
       allow-erasing: true
       packages:
+        - dracut-ostree
         - gnome-shell
         - gdm
 
