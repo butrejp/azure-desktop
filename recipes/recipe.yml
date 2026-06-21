@@ -11,25 +11,30 @@ modules:
       - source: system
         destination: /
 
-  # --- Install Fedora repos and keys via script ---
+  # --- Inject Fedora repos ---
   - type: script
     scripts:
       - inject-fedora-repos.sh
 
-  # --- Fix repo files for Azure Linux environment ---
+  # --- Fix repo files ---
   - type: script
     scripts:
       - fix-fedora-repos.sh
 
-  # --- Install desktop packages from Fedora repos ---
+  # --- Install desktop packages + Fedora ostree (with dracut module) ---
   - type: dnf
     install:
       skip-unavailable: true
       allow-erasing: true
       packages:
-        - dracut-ostree
+        - ostree          # Fedora's ostree includes 98ostree dracut module
         - gnome-shell
         - gdm
+
+  # --- Ensure dracut includes ostree module ---
+  - type: script
+    scripts:
+      - configure-dracut-ostree.sh
 
   - type: systemd
     system:
