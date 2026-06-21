@@ -9,16 +9,24 @@ add_dracutmodules+=" ostree "
 install_items+=" /usr/lib/ostree/prepare-root.cfg "
 EOF
 
-# Verify the 98ostree module is present
-if [ ! -d /usr/lib/dracut/modules.d/98ostree ]; then
-    echo "ERROR: 98ostree dracut module not found!" >&2
-    echo "Fedora ostree package may not have installed correctly." >&2
-    ls -la /usr/lib/dracut/modules.d/ || true
+# Verify the ostree dracut module is present (Fedora uses 50ostree, not 98ostree)
+OSTREE_MODULE=""
+for mod in /usr/lib/dracut/modules.d/50ostree /usr/lib/dracut/modules.d/98ostree; do
+    if [ -d "$mod" ]; then
+        OSTREE_MODULE="$mod"
+        break
+    fi
+done
+
+if [ -z "$OSTREE_MODULE" ]; then
+    echo "ERROR: ostree dracut module not found!" >&2
+    echo "Checked: 50ostree, 98ostree" >&2
+    ls -la /usr/lib/dracut/modules.d/ | grep -E "ostree|bootc" || true
     exit 1
 fi
 
-echo "98ostree dracut module verified at:"
-ls -la /usr/lib/dracut/modules.d/98ostree/
+echo "ostree dracut module verified at: $OSTREE_MODULE"
+ls -la "$OSTREE_MODULE/"
 
 # Clean caches
 dnf5 clean all
