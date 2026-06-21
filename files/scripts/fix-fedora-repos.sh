@@ -24,7 +24,6 @@ for repo in /etc/yum.repos.d/fedora*.repo /etc/yum.repos.d/fedora-*.repo; do
 done
 
 # --- 3. Disable repos that conflict with Azure Linux or are unnecessary ---
-# Azure Linux provides its own base packages, so we only want Fedora for desktop/gui stuff
 dnf5 config-manager setopt fedora-cisco-openh264.enabled=0 2>/dev/null || true
 dnf5 config-manager setopt fedora-modular.enabled=0 2>/dev/null || true
 dnf5 config-manager setopt fedora-updates-modular.enabled=0 2>/dev/null || true
