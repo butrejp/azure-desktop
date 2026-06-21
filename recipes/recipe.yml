@@ -21,13 +21,16 @@ modules:
     scripts:
       - fix-fedora-repos.sh
 
-  # --- Install desktop packages + Fedora ostree (with dracut module) ---
+  # --- Swap Azure Linux ostree for Fedora ostree (includes 98ostree dracut module) ---
   - type: dnf
+    replace:
+      - from-repo: fedora
+        allow-erasing: true
+        packages:
+          - ostree
     install:
-      skip-unavailable: true
       allow-erasing: true
       packages:
-        - ostree          # Fedora's ostree includes 98ostree dracut module
         - gnome-shell
         - gdm
 
