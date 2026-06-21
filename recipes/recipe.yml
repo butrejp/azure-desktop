@@ -6,8 +6,8 @@ name: azure-desktop
 description: microsoft maximalism
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: mcr.microsoft.com/azurelinux-beta/distroless/debug
-image-version: 4.0 
+base-image: ghcr.io/butrejp/azure-coreos
+image-version: latest 
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
