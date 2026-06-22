@@ -38,6 +38,11 @@ modules:
   - type: script
     scripts:
       - create-system-users.sh
+  
+  - type: script
+    scripts:
+      - install-fedora-core.sh
+
 
   # --- Install Fedora kernel + desktop (single transaction, single version) ---
   - type: dnf
