@@ -16,3 +16,9 @@ getent passwd dbus || echo "WARN: dbus missing"
 
 echo "=== /etc/nsswitch.conf ==="
 cat /etc/nsswitch.conf | grep -E "passwd|group"
+
+mkdir -p /etc/selinux
+cat > /etc/selinux/config << 'EOF'
+SELINUX=disabled
+SELINUXTYPE=targeted
+EOF
