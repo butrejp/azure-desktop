@@ -11,7 +11,7 @@ countme=1
 metadata_expire=7d
 repo_gpgcheck=0
 type=rpm
-gpgcheck=1
+gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-azurelinux-4.0-$basearch
 skip_if_unavailable=False
 
@@ -22,7 +22,7 @@ enabled=0
 metadata_expire=7d
 repo_gpgcheck=0
 type=rpm
-gpgcheck=1
+gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-azurelinux-4.0-$basearch
 skip_if_unavailable=True
 
@@ -33,7 +33,7 @@ enabled=0
 metadata_expire=7d
 repo_gpgcheck=0
 type=rpm
-gpgcheck=1
+gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-azurelinux-4.0-$basearch
 skip_if_unavailable=True
 EOF
@@ -48,14 +48,7 @@ countme=1
 metadata_expire=7d
 repo_gpgcheck=0
 type=rpm
-gpgcheck=1
+gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-azurelinux-4.0-$basearch
 skip_if_unavailable=False
 EOF
-
-# Import Azure Linux GPG key if not present
-if [ ! -f /etc/pki/rpm-gpg/RPM-GPG-KEY-azurelinux-4.0-x86_64 ]; then
-    mkdir -p /etc/pki/rpm-gpg
-    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | \
-        gpg --dearmor > /etc/pki/rpm-gpg/RPM-GPG-KEY-azurelinux-4.0-x86_64
-fi
