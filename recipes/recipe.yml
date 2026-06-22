@@ -19,7 +19,7 @@ modules:
   - type: dnf
     repos:
       files:
-        - https://packages.microsoft.com/config/fedora/43/packages-microsoft-prod.rpm
+        - https://packages.microsoft.com/config/fedora/43/prod.repo
     install:
       packages:
         - pwsh
