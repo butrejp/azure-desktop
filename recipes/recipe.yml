@@ -14,7 +14,7 @@ modules:
   - type: script
     scripts:
       - inject-azurelinux-repos.sh
-      - vscode-install.sh
+    #  - vscode-install.sh
       - override-os-release.sh
 
   - type: dnf
@@ -26,6 +26,7 @@ modules:
         - dotnet-sdk-10.0
         - edge
         - code
+        - powershell
 
 
 
