@@ -24,10 +24,6 @@ modules:
         # Azure Linux packages available in the repos
         - azurelinux-release
         - azurelinux-logos
-        - azurelinux-backgrounds
-        - msopenjdk-21
-        - blobfuse2
-        # Add more as you find them
 
   - type: dnf
     install:
