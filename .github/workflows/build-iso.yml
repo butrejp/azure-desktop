@@ -1,0 +1,37 @@
+name: generate-iso
+on:
+  schedule:
+    - cron: "00 10 * * 1" # build at 10:00 UTC every Monday
+  workflow_dispatch:
+
+jobs:
+  iso:
+    name: Create ISO
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - azure-desktop
+    steps:
+      - name: Build ISO
+        uses: jasonn3/build-container-installer@main
+        id: iso
+        with:
+          arch: x86_64
+          image_name: ${{ matrix.image }}
+          image_repo: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+          image_tag: latest
+          version: 43
+          iso_name: ${{ matrix.image }}-latest.iso
+          variant: silverblue
+
+      - name: Upload ISO to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.image }}-iso-${{ github.run_id }}
+          path: |
+            ${{ steps.iso.outputs.iso_path }}
+            ${{ steps.iso.outputs.checksum_path }}
+          retention-days: 7
+          if-no-files-found: error
