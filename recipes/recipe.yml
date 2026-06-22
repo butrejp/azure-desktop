@@ -22,7 +22,7 @@ modules:
       allow-erasing: true
       packages:
         # Azure Linux packages available in the repos
-        - azurelinux-release
+        #- azurelinux-release
         - azurelinux-logos
 
   - type: dnf
