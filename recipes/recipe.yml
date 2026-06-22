@@ -44,6 +44,11 @@ modules:
         - kernel-modules-extra
         - gnome-shell
         - gdm
+        - fastfetch
+    remove:
+      packages:
+        - firefox
+        - nvtop
 
   - type: systemd
     system:
