@@ -1,12 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# Debug: trap errors and print the failing line
 trap 'echo "ERROR at line $LINENO: exit code $?" >&2' ERR
 
 echo "=== Pre-creating system users for Fedora packages ==="
 
-# Helper: append to passwd/shadow/group/gshadow
 ensure_passwd_entry() {
     local user="$1" uid="$2" gid="$3" gecos="$4" home="$5" shell="$6"
     local entry="$user:x:$uid:$gid:$gecos:$home:$shell"
@@ -93,43 +91,46 @@ ensure_passwd_entry flatpak 994 994 "Flatpak system helper" / /usr/sbin/nologin
 ensure_group_entry gdm 42
 ensure_passwd_entry gdm 42 42 "GNOME Display Manager" /var/lib/gdm /sbin/nologin
 
-# --- Drop sysusers.d files as fallback ---
-mkdir -p /usr/lib/sysusers.d
-cat > /usr/lib/sysusers.d/99-azure-desktop.conf << 'EOF'
-u systemd-network 192 "systemd Network Management" /run/systemd/netif
-u systemd-resolve 193 "systemd Resolver" /run/systemd/resolve
-u systemd-timesync 194 "systemd Time Synchronization" /run/systemd/timesync
-u polkitd 998 "User for polkitd" /
-u dbus 81 "System message bus" /
-u rtkit 172 "RealtimeKit" /proc
-u geoclue 992 "Geolocation service" /var/lib/geoclue
-u pipewire 996 "PipeWire System Daemon" /var/run/pipewire
-u colord 997 "Color management daemon" /var/lib/colord
-u flatpak 994 "Flatpak system helper" /
-u gdm 42 "GNOME Display Manager" /var/lib/gdm
-EOF
-
-# --- Force systemd-sysusers to re-run on next boot ---
-touch /etc/.needs-update
-
-# --- Try running systemd-sysusers ---
-if command -v systemd-sysusers >/dev/null 2>&1; then
-    echo "Running systemd-sysusers now..."
-    systemd-sysusers --root=/
-fi
-
 # --- Pre-create runtime directories ---
 mkdir -p /var/lib/systemd/network /var/lib/systemd/resolved /var/lib/polkit-1
 mkdir -p /var/lib/geoclue /var/lib/colord /var/lib/gdm
 mkdir -p /var/run/pipewire /run/systemd/netif /run/systemd/resolve /run/systemd/timesync
 
-# --- Build environment check ---
-echo "=== Build environment check ==="
-which useradd 2>/dev/null || echo "useradd: not found"
-which groupadd 2>/dev/null || echo "groupadd: not found"
-which systemd-sysusers 2>/dev/null || echo "systemd-sysusers: not found"
-ls -la /etc/passwd /usr/lib/passwd 2>/dev/null || true
-ls -la /etc/group /usr/lib/group 2>/dev/null || true
+# --- Force systemd-sysusers to run on every boot by removing conditions ---
+mkdir -p /usr/lib/systemd/system/systemd-sysusers.service.d
+cat > /usr/lib/systemd/system/systemd-sysusers.service.d/override.conf << 'EOF'
+[Unit]
+ConditionNeedsUpdate=
+ConditionCredential=
+EOF
+
+# --- Also force it via a one-shot first-boot service ---
+mkdir -p /usr/lib/systemd/system
+cat > /usr/lib/systemd/system/azure-firstboot-users.service << 'EOF'
+[Unit]
+Description=Ensure system users exist on first boot
+DefaultDependencies=no
+Before=sysinit.target
+After=systemd-remount-fs.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemd-sysusers
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target
+EOF
+
+# --- Enable the first-boot service ---
+mkdir -p /etc/systemd/system/sysinit.target.wants
+ln -sf /usr/lib/systemd/system/azure-firstboot-users.service /etc/systemd/system/sysinit.target.wants/azure-firstboot-users.service
+
+# --- Run systemd-sysusers now during build ---
+if command -v systemd-sysusers >/dev/null 2>&1; then
+    echo "Running systemd-sysusers now..."
+    systemd-sysusers --root=/
+fi
 
 # --- Verify ---
 echo "=== /etc/passwd ==="
@@ -137,12 +138,6 @@ cat /etc/passwd
 echo ""
 echo "=== /etc/group ==="
 cat /etc/group
-echo ""
-echo "=== /usr/lib/passwd ==="
-cat /usr/lib/passwd 2>/dev/null || echo "not present"
-echo ""
-echo "=== /usr/lib/group ==="
-cat /usr/lib/group 2>/dev/null || echo "not present"
 
 echo "=== Done creating system users ==="
 exit 0
