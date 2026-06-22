@@ -21,12 +21,13 @@ modules:
     repos:
       files:
         - https://packages.microsoft.com/config/fedora/43/prod.repo
+
+  - type: dnf
     install:
       packages:
         - dotnet-sdk-10.0
         - edge
-        - code
-        - powershell
+
 
 
 
