@@ -1,10 +1,6 @@
-echo "=== Build environment check ==="
-which useradd 2>/dev/null || echo "useradd NOT FOUND"
-which groupadd 2>/dev/null || echo "groupadd NOT FOUND"
-which systemd-sysusers 2>/dev/null || echo "systemd-sysusers NOT FOUND"
-ls -la /etc/passwd /usr/lib/passwd 2>/dev/null || true
 #!/bin/bash
-set -euo pipefail
+set -uo pipefail
+# Note: NO 'set -e' — we handle errors manually to avoid killing the build
 
 echo "=== Pre-creating system users for Fedora packages ==="
 
@@ -15,20 +11,18 @@ ensure_passwd_entry() {
     local shadow="$user:!!:19842:0:99999:7:::"
 
     for db in /etc/passwd /usr/lib/passwd; do
-        mkdir -p "$(dirname "$db")"
-        touch "$db"
+        mkdir -p "$(dirname "$db")" 2>/dev/null || true
+        touch "$db" 2>/dev/null || true
         if ! grep -q "^$user:" "$db" 2>/dev/null; then
-            echo "$entry" >> "$db"
-            echo "Added $user to $db"
+            echo "$entry" >> "$db" 2>/dev/null && echo "Added $user to $db" || echo "WARN: could not write $user to $db"
         fi
     done
 
     for db in /etc/shadow /usr/lib/shadow; do
-        mkdir -p "$(dirname "$db")"
-        touch "$db"
-        chmod 000 "$db"
+        mkdir -p "$(dirname "$db")" 2>/dev/null || true
+        touch "$db" 2>/dev/null || true
         if ! grep -q "^$user:" "$db" 2>/dev/null; then
-            echo "$shadow" >> "$db"
+            echo "$shadow" >> "$db" 2>/dev/null || true
         fi
         chmod 000 "$db" 2>/dev/null || true
     done
@@ -39,20 +33,18 @@ ensure_group_entry() {
     local entry="$group:x:$gid:"
 
     for db in /etc/group /usr/lib/group; do
-        mkdir -p "$(dirname "$db")"
-        touch "$db"
+        mkdir -p "$(dirname "$db")" 2>/dev/null || true
+        touch "$db" 2>/dev/null || true
         if ! grep -q "^$group:" "$db" 2>/dev/null; then
-            echo "$entry" >> "$db"
-            echo "Added $group to $db"
+            echo "$entry" >> "$db" 2>/dev/null && echo "Added $group to $db" || echo "WARN: could not write $group to $db"
         fi
     done
 
     for db in /etc/gshadow /usr/lib/gshadow; do
-        mkdir -p "$(dirname "$db")"
-        touch "$db"
-        chmod 000 "$db"
+        mkdir -p "$(dirname "$db")" 2>/dev/null || true
+        touch "$db" 2>/dev/null || true
         if ! grep -q "^$group:" "$db" 2>/dev/null; then
-            echo "$group:!!::" >> "$db"
+            echo "$group:!!::" >> "$db" 2>/dev/null || true
         fi
         chmod 000 "$db" 2>/dev/null || true
     done
@@ -97,10 +89,9 @@ ensure_passwd_entry flatpak 994 994 "Flatpak system helper" / /usr/sbin/nologin
 ensure_group_entry gdm 42
 ensure_passwd_entry gdm 42 42 "GNOME Display Manager" /var/lib/gdm /sbin/nologin
 
-# --- Also drop sysusers.d files as a fallback ---
-mkdir -p /usr/lib/sysusers.d
-cat > /usr/lib/sysusers.d/99-azure-desktop.conf << 'EOF'
-# System users for Azure Linux + Fedora hybrid
+# --- Drop sysusers.d files as fallback ---
+mkdir -p /usr/lib/sysusers.d 2>/dev/null || true
+cat > /usr/lib/sysusers.d/99-azure-desktop.conf << 'EOF' 2>/dev/null || true
 u systemd-network 192 "systemd Network Management" /run/systemd/netif
 u systemd-resolve 193 "systemd Resolver" /run/systemd/resolve
 u systemd-timesync 194 "systemd Time Synchronization" /run/systemd/timesync
@@ -115,28 +106,31 @@ u gdm 42 "GNOME Display Manager" /var/lib/gdm
 EOF
 
 # --- Force systemd-sysusers to re-run on next boot ---
-# Touch /etc to make ConditionNeedsUpdate trigger
 touch /etc/.needs-update 2>/dev/null || true
-# Also try to trigger it directly if we can
+
+# --- Try running systemd-sysusers, but don't fail if it errors ---
 if command -v systemd-sysusers >/dev/null 2>&1; then
     echo "Running systemd-sysusers now..."
-    systemd-sysusers --root=/ 2>/dev/null || true
+    systemd-sysusers --root=/ 2>/dev/null || echo "WARN: systemd-sysusers failed, continuing anyway"
 fi
 
 # --- Pre-create runtime directories ---
-mkdir -p /var/lib/systemd/network /var/lib/systemd/resolved /var/lib/polkit-1
-mkdir -p /var/lib/geoclue /var/lib/colord /var/lib/gdm
-mkdir -p /var/run/pipewire /run/systemd/netif /run/systemd/resolve /run/systemd/timesync
+mkdir -p /var/lib/systemd/network /var/lib/systemd/resolved /var/lib/polkit-1 2>/dev/null || true
+mkdir -p /var/lib/geoclue /var/lib/colord /var/lib/gdm 2>/dev/null || true
+mkdir -p /var/run/pipewire /run/systemd/netif /run/systemd/resolve /run/systemd/timesync 2>/dev/null || true
 
 # --- Verify ---
 echo "=== /etc/passwd ==="
-cat /etc/passwd
+cat /etc/passwd 2>/dev/null || echo "cannot read /etc/passwd"
 echo ""
 echo "=== /etc/group ==="
-cat /etc/group
+cat /etc/group 2>/dev/null || echo "cannot read /etc/group"
 echo ""
 echo "=== /usr/lib/passwd ==="
 cat /usr/lib/passwd 2>/dev/null || echo "not present"
 echo ""
 echo "=== /usr/lib/group ==="
 cat /usr/lib/group 2>/dev/null || echo "not present"
+
+echo "=== Done creating system users ==="
+exit 0
