@@ -14,22 +14,45 @@ modules:
   - type: script
     scripts:
       - inject-azurelinux-repos.sh
-    #  - vscode-install.sh
+      - inject-microsoft-repos.sh
       - override-os-release.sh
 
   - type: dnf
-    repos:
-      files:
-        - https://packages.microsoft.com/config/fedora/43/prod.repo
+    install:
+      allow-erasing: true
+      packages:
+        # Azure Linux packages available in the repos
+        - azurelinux-release
+        - azurelinux-logos
+        - azurelinux-backgrounds
+        - msopenjdk-21
+        - blobfuse2
+        # Add more as you find them
 
   - type: dnf
     install:
+      allow-erasing: true
       packages:
-        - dotnet-sdk-10.0
-        - edge
+        # Microsoft packages from their Fedora prod repo
+        - code
+        - powershell
+        - microsoft-edge-stable
+        # Add more as needed
 
+  - type: dnf
+    install:
+      allow-erasing: true
+      packages:
+        - kernel
+        - kernel-modules
+        - kernel-modules-extra
+        - gnome-shell
+        - gdm
 
+  - type: systemd
+    system:
+      enabled:
+        - gdm.service
 
-
-
+  - type: soar
   - type: signing
