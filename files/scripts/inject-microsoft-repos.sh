@@ -21,11 +21,11 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
 
-# PowerShell repo — Microsoft uses RHEL/CentOS repos for PowerShell on Fedora
+# PowerShell repo (RHEL 9.0)
 cat > /etc/yum.repos.d/powershell.repo << 'EOF'
 [powershell]
 name=PowerShell
-baseurl=https://packages.microsoft.com/yumrepos/microsoft-rhel9-prod
+baseurl=https://packages.microsoft.com/yumrepos/microsoft-rhel9.0-prod
 enabled=1
 gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc

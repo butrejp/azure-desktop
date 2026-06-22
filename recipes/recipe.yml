@@ -31,7 +31,7 @@ modules:
       packages:
         # Microsoft packages from their Fedora prod repo
         - code
-        - https://packages.microsoft.com/yumrepos/microsoft-rhel9.0-prod/Packages/p/powershell-lts-7.4.7-1.rh.x86_64.rpm
+        - powershell-lts
         - microsoft-edge-stable
         # Add more as needed
 
