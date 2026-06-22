@@ -14,6 +14,7 @@ modules:
   - type: script
     scripts:
       - inject-azurelinux-repos.sh
+      - vscode-install.sh
       - override-os-release.sh
 
   - type: dnf
@@ -22,9 +23,9 @@ modules:
         - https://packages.microsoft.com/config/fedora/43/prod.repo
     install:
       packages:
-        - pwsh
         - dotnet-sdk-10.0
         - edge
+        - code
 
 
 
