@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: azure-desktop
-description: microsoft maximalism
+description: microsoft maximalism, fedora bones (begrudgingly)
 
-base-image: ghcr.io/butrejp/azure-coreos
-image-version: latest
+base-image: ghcr.io/ublue-os/silverblue-main
+image-version: 43
 
 modules:
   - type: files
@@ -13,41 +13,20 @@ modules:
 
   - type: script
     scripts:
-      - inject-fedora-repos.sh
-
-  - type: script
-    scripts:
-      - fix-fedora-repos.sh
+      - inject-azurelinux-repos.sh
+      - override-os-release.sh
 
   - type: dnf
-    replace:
-      - from-repo: fedora
-        allow-erasing: true
-        packages:
-          - ostree
-
-  - type: script
-    scripts:
-      - configure-dracut-ostree.sh
-
-  - type: script
-    scripts:
-      - install-fedora-core.sh
-
-  - type: dnf
+    repos:
+      files:
+        - https://packages.microsoft.com/config/fedora/43/packages-microsoft-prod.rpm
     install:
-      allow-erasing: true
       packages:
-        - kernel
-        - kernel-modules
-        - kernel-modules-extra
-        - gnome-shell
-        - gdm
+        - pwsh
+        - dotnet-sdk-10.0
+        - edge
 
-  - type: systemd
-    system:
-      enabled:
-        - gdm.service
 
-  - type: soar
+
+
   - type: signing
