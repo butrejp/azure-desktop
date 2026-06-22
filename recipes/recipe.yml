@@ -54,6 +54,12 @@ modules:
     system:
       enabled:
         - gdm.service
+  - type: script
+    snippets:
+      - "sed -i 's|^SHELL=.*|SHELL=/usr/bin/pwsh|' /etc/default/useradd 2>/dev/null || true"
+
+    
 
   - type: soar
+  - type: brew
   - type: signing
