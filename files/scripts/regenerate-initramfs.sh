@@ -16,11 +16,14 @@ echo "Kernel version: $kver"
 echo "=== Installed kernels ==="
 ls /lib/modules/
 
+echo "=== Host /sysroot ==="
+ls -ld /sysroot 2>/dev/null || echo "MISSING on host"
+
 echo "=== Dracut modules available ==="
 dracut --list-modules --kver "$kver" | grep -i ostree || echo "No ostree module found"
 
 echo "=== Files on disk ==="
-find /usr/lib/dracut/modules.d -maxdepth 1 \( -name "*ostree*" -o -name "*bootc*" \) || echo "No ostree/bootc dirs"
+find /usr/lib/dracut/modules.d -maxdepth 1 \( -name "*ostree*" -o -name "*bootc*" -o -name "*sysroot*" \) || echo "No relevant dirs"
 
 echo "=== Dracut config ==="
 cat /etc/dracut.conf.d/99-ostree.conf 2>/dev/null || echo "Config missing"
@@ -30,6 +33,11 @@ echo "Generating initramfs to /usr/lib/modules/$kver/initramfs.img..."
 dracut --force --no-hostonly --add "ostree bootc" \
        --kver "$kver" \
        /usr/lib/modules/${kver}/initramfs.img "${kver}"
+
+echo "=== Initramfs /sysroot check ==="
+lsinitrd "/usr/lib/modules/${kver}/initramfs.img" | grep -E "^d.*sysroot" || echo "WARNING: /sysroot dir not in initramfs"
+lsinitrd "/usr/lib/modules/${kver}/initramfs.img" | grep "prepare-root.cfg" || echo "WARNING: prepare-root.cfg missing"
+lsinitrd "/usr/lib/modules/${kver}/initramfs.img" | grep "ostree-prepare-root.service" || echo "WARNING: service file missing"
 
 echo "=== Initramfs contents (ostree-related) ==="
 lsinitrd "/usr/lib/modules/${kver}/initramfs.img" | grep -i "ostree\|bootc\|prepare-root" || true
