@@ -1,5 +1,11 @@
 # azure-desktop &nbsp; [![bluebuild build badge](https://github.com/butrejp/azure-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/butrejp/azure-desktop/actions/workflows/build.yml)
 
+
+
+don't follow these instructions, use bootc switch.  I'll write up an actual readme later
+
+
+
 See the [BlueBuild docs](https://blue-build.org/how-to/setup/) for quick setup instructions for setting up your own repository based on this template.
 
 After setup, it is recommended you update this README to describe your custom image.
