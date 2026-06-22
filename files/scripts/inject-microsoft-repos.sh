@@ -11,11 +11,21 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
 
-# Microsoft production repo (Fedora 43) for PowerShell, Edge, etc.
-cat > /etc/yum.repos.d/microsoft-prod.repo << 'EOF'
-[packages-microsoft-com-prod]
-name=Microsoft Production
-baseurl=https://packages.microsoft.com/fedora/43/prod/
+# Microsoft Edge repo
+cat > /etc/yum.repos.d/microsoft-edge.repo << 'EOF'
+[microsoft-edge]
+name=microsoft-edge
+baseurl=https://packages.microsoft.com/yumrepos/edge
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+EOF
+
+# PowerShell repo — Microsoft uses RHEL/CentOS repos for PowerShell on Fedora
+cat > /etc/yum.repos.d/powershell.repo << 'EOF'
+[powershell]
+name=PowerShell
+baseurl=https://packages.microsoft.com/yumrepos/microsoft-rhel9-prod
 enabled=1
 gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
