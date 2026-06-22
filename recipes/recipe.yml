@@ -11,17 +11,14 @@ modules:
       - source: system
         destination: /
 
-  # --- Inject Fedora repos ---
   - type: script
     scripts:
       - inject-fedora-repos.sh
 
-  # --- Fix repo files ---
   - type: script
     scripts:
       - fix-fedora-repos.sh
 
-  # --- Replace Azure Linux ostree with Fedora ostree ---
   - type: dnf
     replace:
       - from-repo: fedora
@@ -29,22 +26,14 @@ modules:
         packages:
           - ostree
 
-  # --- Write dracut config BEFORE kernel install ---
   - type: script
     scripts:
       - configure-dracut-ostree.sh
 
-  # --- Pre-create Fedora system users that Azure Linux lacks ---
-  - type: script
-    scripts:
-      - create-system-users.sh
-  
   - type: script
     scripts:
       - install-fedora-core.sh
 
-
-  # --- Install Fedora kernel + desktop (single transaction, single version) ---
   - type: dnf
     install:
       allow-erasing: true
@@ -55,16 +44,10 @@ modules:
         - gnome-shell
         - gdm
 
-  # --- Regenerate initramfs for the one kernel ---
-  - type: script
-    scripts:
-      - regenerate-initramfs.sh
-
   - type: systemd
     system:
       enabled:
         - gdm.service
 
   - type: soar
-
   - type: signing
