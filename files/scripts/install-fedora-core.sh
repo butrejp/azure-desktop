@@ -3,7 +3,13 @@ set -euo pipefail
 
 echo "=== Installing Fedora @core group ==="
 
-dnf5 group install core --allowerasing -y
+dnf5 group install core --allowerasing \
+    --exclude=selinux-policy-targeted \
+    --exclude=selinux-policy \
+    --exclude=policycoreutils \
+    --exclude=checkpolicy \
+    --exclude=selinux-policy-minimum \
+    --exclude=selinux-policy-mls
 
 echo "=== Fedora @core installed ==="
 
