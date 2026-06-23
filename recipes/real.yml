@@ -18,24 +18,6 @@ modules:
      # - override-os-release.sh
 
   - type: dnf
-    install:
-      allow-erasing: true
-      packages:
-        # Azure Linux packages available in the repos
-        #- azurelinux-release
-        - azurelinux-logos
-
-  - type: dnf
-    install:
-      allow-erasing: true
-      packages:
-        # Microsoft packages from their Fedora prod repo
-        - code
-        - powershell-lts
-        - microsoft-edge-stable
-        # Add more as needed
-
-  - type: dnf
     group-install:
       with-optional: true
       packages:
@@ -43,6 +25,13 @@ modules:
     install:
       allow-erasing: true
       packages:
+        # Azure Linux packages available in the repos
+        #- azurelinux-release
+        - azurelinux-logos
+        - git
+        - code
+        - powershell-lts
+        - microsoft-edge-stable
         - gdm
         - fastfetch
 
