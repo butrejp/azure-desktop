@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: proto
-description: microsoft maximalism, fedora bones (begrudgingly)
+name: azure-desktop
+description: microsoft maximalism
 
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 43
+base-image: ghcr.io/butrejp/azure-coreos
+image-version: latest
 
 modules:
   - type: files
@@ -13,9 +13,9 @@ modules:
 
   - type: script
     scripts:
-      - inject-azurelinux-repos.sh
+     # - inject-azurelinux-repos.sh
       - inject-microsoft-repos.sh
-      - override-os-release.sh
+     # - override-os-release.sh
 
   - type: dnf
     install:
@@ -39,16 +39,9 @@ modules:
     install:
       allow-erasing: true
       packages:
-        - kernel
-        - kernel-modules
-        - kernel-modules-extra
         - gnome-shell
         - gdm
         - fastfetch
-    remove:
-      packages:
-        - firefox
-        - nvtop
 
   - type: systemd
     system:
