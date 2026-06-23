@@ -36,10 +36,13 @@ modules:
         # Add more as needed
 
   - type: dnf
+    group-install:
+      with-optional: true
+      packages:
+        - GNOME Desktop Environment
     install:
       allow-erasing: true
       packages:
-        - gnome-shell
         - gdm
         - fastfetch
 
