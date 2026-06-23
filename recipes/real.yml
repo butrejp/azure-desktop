@@ -21,7 +21,7 @@ modules:
     group-install:
       with-optional: true
       packages:
-        - GNOME Desktop Environment
+        - gnome-desktop
     install:
       allow-erasing: true
       packages:
