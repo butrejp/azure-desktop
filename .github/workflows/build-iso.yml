@@ -22,9 +22,9 @@ jobs:
           image_name: azure-desktop
           image_repo: ghcr.io/${{ github.repository_owner }}
           image_tag: latest
-          version: 43
-          iso_name: ${{ matrix.image }}-latest.iso
-          variant: silverblue
+          version: 4.0
+          iso_name: azure-desktop-latest.iso
+          variant: gnome
 
       - name: Upload ISO to GitHub Artifacts
         uses: actions/upload-artifact@v7
