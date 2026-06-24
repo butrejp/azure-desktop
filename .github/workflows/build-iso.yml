@@ -22,7 +22,7 @@ jobs:
           image_name: azure-desktop
           image_repo: ghcr.io/${{ github.repository_owner }}
           image_tag: latest
-          version: 4.0
+          version: 43
           iso_name: azure-desktop-latest.iso
           variant: gnome
 
